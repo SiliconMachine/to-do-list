@@ -1,7 +1,8 @@
 /* Get elements */
 const addItems = document.querySelector('.add-items');
 const itemsList = document.querySelector('.list');
-const items = JSON.parse(localStorage.getItem('items')) || [];
+let items = JSON.parse(localStorage.getItem('items')) || [];
+const clearAllBtn = document.querySelector('#clear');
 
 /* Functions */
 function addItem(e) {
@@ -18,12 +19,12 @@ function addItem(e) {
     this.reset();
 }
 
-function populateList(plates = [], platesList) {
-    platesList.innerHTML = plates.map((plate, i) => {
+function populateList(items = [], itemsList) {
+    itemsList.innerHTML = items.map((item, i) => {
         return `
         <li class="item">
-          <input type="checkbox" data-index=${i} id="item${i}" ${plate.done ? 'checked' : ''} />
-          <label for="item${i}" class="item-text">${plate.text}</label>
+          <input type="checkbox" data-index=${i} id="item${i}" ${item.done ? 'checked' : ''} />
+          <label for="item${i}" class="item-text">${item.text}</label>
         </li>
       `;
     }).join('');
@@ -37,13 +38,20 @@ function toggleDone(e) {
     const index = el.dataset.index;
 
     items[index].done = !items[index].done;
-    localStorage.setItem('items', JSON.stringify(items))
-    populateList(items, itemsList)
-    console.log(e.target.dataset)
+    localStorage.setItem('items', JSON.stringify(items));
+    populateList(items, itemsList);
+    console.log(e.target.dataset);
+}
+
+function clearAll() {
+    itemsList.innerHTML = '';
+    localStorage.removeItem('items');
+    items = [];
 }
 
 /* Hook up listeners */
-addItems.addEventListener('submit', addItem)
-itemsList.addEventListener('click', toggleDone)
+addItems.addEventListener('submit', addItem);
+itemsList.addEventListener('click', toggleDone);
+clearAllBtn.addEventListener('click', clearAll);
 
-populateList(items, itemsList)
+populateList(items, itemsList);
